@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { CheckCircle, RotateCcw, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { CheckCircle, RotateCcw, Loader2, Save, Check } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
@@ -33,6 +33,40 @@ export function ResultsScreen({
   const [evaluation, setEvaluation] = useState<string | null>(null);
   const [isEvaluating, setIsEvaluating] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
+  
+  // Track if we already auto-saved so we don't save twice on re-renders
+  const hasAutosaved = useRef(false);
+
+  const handleSaveToHistory = async (evaluatedText: string) => {
+    if (isSaving || saveSuccess) return;
+    setIsSaving(true);
+    try {
+      const res = await fetch("/api/history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sourceText,
+          translatedText: translationText,
+          aiInsights: { text: evaluatedText },
+          selectedWords: dictionaryCache,
+          translationType: translationType || "unknown",
+          timeSpentSeconds,
+          sourceLanguage,
+          targetLanguage,
+          languageProficiency: languageProficiency || "unknown",
+        })
+      });
+      if (!res.ok) throw new Error("Failed to save translation");
+      setSaveSuccess(true);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to auto-save to history.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -58,6 +92,13 @@ export function ResultsScreen({
         }
         
         setEvaluation(data.evaluation);
+        
+        // Autosave once evaluation is ready
+        if (!hasAutosaved.current) {
+          hasAutosaved.current = true;
+          handleSaveToHistory(data.evaluation);
+        }
+
       } catch (err: any) {
         if (isMounted) {
           setError(err.message || "An error occurred during evaluation.");
@@ -171,14 +212,31 @@ export function ResultsScreen({
           </div>
         )}
 
-        <div className="flex justify-center mt-auto pt-8 border-t border-border">
+        <div className="flex justify-center mt-auto pt-8 border-t border-border gap-4">
           <button
             onClick={onReset}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors px-8 py-4 rounded-md hover:bg-surface-hover font-medium border border-transparent hover:border-border"
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors px-6 py-3 rounded-md hover:bg-surface-hover font-medium border border-transparent hover:border-border"
           >
             <RotateCcw size={18} />
-            Start New Translation
+            New Translation
           </button>
+          
+          {!isEvaluating && evaluation && (
+            <button
+              onClick={() => handleSaveToHistory(evaluation)}
+              disabled={isSaving || saveSuccess}
+              className={`flex items-center gap-2 transition-colors px-6 py-3 rounded-md font-medium border
+                ${saveSuccess 
+                  ? "bg-primary/20 text-primary border-primary/30" 
+                  : "bg-surface text-foreground hover:bg-surface-hover border-border"
+                }`}
+            >
+              {isSaving ? <Loader2 size={18} className="animate-spin" /> : 
+               saveSuccess ? <Check size={18} /> : 
+               <Save size={18} />}
+              {saveSuccess ? "Saved to History" : "Save to History"}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { Moon, Sun, ChevronDown, Search } from "lucide-react";
+import { Moon, Sun, ChevronDown, Search, History } from "lucide-react";
+import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 
 interface SetupScreenProps {
@@ -146,14 +147,25 @@ export function SetupScreen({
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors p-8">
       <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col pt-12 relative animate-in fade-in duration-500">
-        <div className="absolute top-0 right-0">
+        <div className="absolute top-0 right-0 flex items-center gap-2">
           {mounted && (
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-2 rounded-full hover:bg-surface-hover text-muted-foreground transition-colors"
-            >
-              {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-            </button>
+            <>
+              <Link href="/history">
+                <button
+                  className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-surface-hover rounded-md transition-colors font-medium"
+                >
+                  <History size={18} />
+                  History
+                </button>
+              </Link>
+              <button
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="p-2 rounded-full hover:bg-surface-hover text-muted-foreground transition-colors"
+                title="Toggle Theme"
+              >
+                {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+              </button>
+            </>
           )}
         </div>
 

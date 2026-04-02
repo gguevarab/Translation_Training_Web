@@ -1,0 +1,26 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model TranslationSession {
+  id                  String   @id @default(uuid())
+  sourceText          String
+  translatedText      String
+  aiInsights          Json
+  selectedWords       Json
+  translationType     String   @default("target_to_native")
+  timeSpentSeconds    Int?
+  sourceLanguage      String?
+  targetLanguage      String?
+  languageProficiency String?
+  createdAt           DateTime @default(now())
+}
