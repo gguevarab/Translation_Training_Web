@@ -6,9 +6,10 @@ interface TranslationCanvasProps {
   targetLanguage: string;
   content: string;
   setContent: (content: string) => void;
+  readOnly?: boolean;
 }
 
-export function TranslationCanvas({ targetLanguage, content, setContent }: TranslationCanvasProps) {
+export function TranslationCanvas({ targetLanguage, content, setContent, readOnly }: TranslationCanvasProps) {
   return (
     <div className="h-full flex flex-col p-8 md:p-12">
       <div className="mb-8 flex items-center justify-between">
@@ -27,9 +28,12 @@ export function TranslationCanvas({ targetLanguage, content, setContent }: Trans
 
       <textarea
         value={content}
-        onChange={(e) => setContent(e.target.value)}
+        onChange={(e) => {
+          if (!readOnly) setContent(e.target.value);
+        }}
+        readOnly={readOnly}
         placeholder={`Begin your ${targetLanguage} translation here...`}
-        className="flex-1 w-full bg-transparent resize-none outline-none font-serif text-lg leading-loose placeholder:text-muted-foreground/40"
+        className={`flex-1 w-full bg-transparent resize-none outline-none font-serif text-lg leading-loose placeholder:text-muted-foreground/40 ${readOnly ? 'opacity-80' : ''}`}
       />
     </div>
   );

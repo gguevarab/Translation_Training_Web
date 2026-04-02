@@ -6,6 +6,8 @@ import { Clock, Info, ArrowRight } from "lucide-react";
 interface ContextSidebarProps {
   sourceLanguage: string;
   targetLanguage: string;
+  translationType?: string;
+  languageProficiency?: string;
   dictionaryCache: Record<string, any>;
   initialTimeSeconds: number;
   onTimeUpdate: (seconds: number) => void;
@@ -15,6 +17,8 @@ interface ContextSidebarProps {
 export function ContextSidebar({
   sourceLanguage,
   targetLanguage,
+  translationType,
+  languageProficiency,
   dictionaryCache,
   initialTimeSeconds,
   onTimeUpdate,
@@ -73,16 +77,35 @@ export function ContextSidebar({
 
         {/* Metadata */}
         <div>
-          <div className="flex items-center justify-between text-sm font-medium mb-2 border-b border-border pb-4">
-            <div className="flex flex-col">
-              <span className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Source</span>
-              <span>{sourceLanguage.split(' ')[0]}</span>
+          <div className="flex flex-col gap-4 text-sm font-medium mb-2 border-b border-border pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <span className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Source</span>
+                <span>{sourceLanguage.split(' ')[0]}</span>
+              </div>
+              <ArrowRight className="text-muted-foreground" size={16} strokeWidth={1.5} />
+              <div className="flex flex-col text-right">
+                <span className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Target</span>
+                <span>{targetLanguage.split(' ')[0]}</span>
+              </div>
             </div>
-            <ArrowRight className="text-muted-foreground" size={16} strokeWidth={1.5} />
-            <div className="flex flex-col text-right">
-              <span className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Target</span>
-              <span>{targetLanguage.split(' ')[0]}</span>
-            </div>
+            
+            {(translationType || languageProficiency) && (
+              <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
+                {translationType && (
+                  <div className="flex flex-col">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Type</span>
+                    <span className="text-xs font-semibold text-primary capitalize">{translationType.toLowerCase()}</span>
+                  </div>
+                )}
+                {languageProficiency && (
+                  <div className="flex flex-col text-right">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Difficulty</span>
+                    <span className="text-xs font-bold px-2 py-0.5 bg-primary/10 text-primary rounded-md inline-block uppercase tracking-wider">{languageProficiency}</span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 

@@ -11,6 +11,8 @@ interface ResultsScreenProps {
   translationText: string;
   sourceLanguage: string;
   targetLanguage: string;
+  translationType?: string;
+  languageProficiency?: string;
   dictionaryCache: Record<string, any>;
   reviewWords: string[];
   timeSpentSeconds: number;
@@ -22,6 +24,8 @@ export function ResultsScreen({
   translationText,
   sourceLanguage,
   targetLanguage,
+  translationType,
+  languageProficiency,
   dictionaryCache,
   timeSpentSeconds,
   onReset,
@@ -82,8 +86,8 @@ export function ResultsScreen({
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground transition-colors p-8 relative animate-in fade-in duration-500 overflow-y-auto w-full">
-      <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col py-8 pb-20">
+    <div className="flex flex-col h-full bg-background text-foreground transition-colors p-6 relative animate-in fade-in duration-500 overflow-y-auto w-full">
+      <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col py-4 pb-12">
         
         <div className="flex flex-col items-center text-center mb-12">
           <div className="mb-6 text-primary">

@@ -151,7 +151,7 @@ export function SourcePanel({ text, language, targetLanguage, dictionaryCache, s
         </span>
       </div>
       
-      <div className="font-serif text-lg leading-loose text-foreground flex-1">
+      <div className="font-serif text-lg leading-loose text-foreground flex-1 whitespace-pre-wrap">
         {words.map((chunk, i) => {
           if (/\s+/.test(chunk)) {
             return <span key={i}>{chunk}</span>;
